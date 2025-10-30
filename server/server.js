@@ -21,7 +21,7 @@ app.use(express.json());
 // ✅ CORS configuration for local dev and deployed frontend
 const allowedOrigins = [
   'http://localhost:5173', // local dev
-  'https://smart-resume-generator-653y.vercel.app' // deployed frontend
+  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app/' // deployed frontend
 ];
 
 app.use(cors({
