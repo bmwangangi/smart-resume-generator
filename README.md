@@ -61,16 +61,15 @@ IMAGEKIT_URL_ENDPOINT=your_url
 OPENAI_API_KEY=your_key
 OPENAI_MODEL=gpt-4o
 OPENAI_BASE_URL=https://openrouter.ai/api/v1
-⚠️ Never commit .env to GitHub.
 
 📦 Installation & Running Locally
+
 ✅ Backend Setup
 cd server
 npm install
 npm start
+
 ✅ Frontend Setup
-bash
-Copy code
 cd client
 npm install
 npm run dev
