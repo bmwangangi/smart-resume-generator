@@ -17,25 +17,26 @@ await connectDB();
 // Parse JSON
 app.use(express.json());
 
-// ✅ CORS configuration
+// ✅ Correct CORS configuration
 const allowedOrigins = [
-  'http://localhost:5173', // local dev
-  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app', // previous deployed frontend
-  'https://smart-resume-generator-6-git-d00b8c-bartasa-mwangangis-projects.vercel.app', // new deployed frontend
-  // Add more frontend URLs here if needed
+  'http://localhost:5173',
+  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app',
+  'https://smart-resume-generator-6-git-d00b8c-bartasa-mwangangis-projects.vercel.app',
 ];
 
 app.use(cors({
   origin: function(origin, callback) {
-    // allow requests with no origin (Postman, curl)
-    if(!origin) return callback(null, true);
-    if(!allowedOrigins.includes(origin)) {
-      const msg = `CORS error: Origin ${origin} not allowed.`;
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
+    if (!origin) return callback(null, true); // allow Postman, curl
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS error: Origin ${origin} not allowed.`), false);
   },
-  credentials: true, // allow cookies/auth headers
+  credentials: true,
+}));
+
+// ✅ Handle preflight requests globally
+app.options('*', cors({
+  origin: allowedOrigins,
+  credentials: true
 }));
 
 // Test route
@@ -46,7 +47,6 @@ app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
