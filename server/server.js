@@ -33,10 +33,12 @@ app.use(cors({
 }));
 
 // ✅ Preflight OPTIONS handler
-app.options('*', cors({
+// ✅ Fixed - works in Express 5
+app.options('/*', cors({
   origin: allowedOrigins,
   credentials: true,
 }));
+
 
 // Routes
 app.use('/api/users', userRouter);
