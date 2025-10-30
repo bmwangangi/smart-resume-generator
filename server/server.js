@@ -17,10 +17,10 @@ await connectDB();
 // Parse JSON
 app.use(express.json());
 
-// ✅ CORS setup using environment variable
+// ✅ CORS middleware
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // add your Vercel frontend URL here
-  'http://localhost:5173'    // for local development
+  'http://localhost:5173',
+  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app',
 ];
 
 app.use(cors({
@@ -32,20 +32,11 @@ app.use(cors({
   credentials: true,
 }));
 
-// ✅ Preflight OPTIONS handler
-// ✅ Fixed - works in Express 5
-app.options('/*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
-
-
 // Routes
 app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
-// Test route
 app.get('/', (req, res) => res.send("Server is live..."));
 
 // Start server
