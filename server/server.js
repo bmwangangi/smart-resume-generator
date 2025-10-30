@@ -11,16 +11,16 @@ const __dirname = path.resolve();
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// API routes
+// API routes (must be BEFORE frontend catch-all)
 app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
-// Catch-all route to serve index.html for frontend routing
-app.get('*', (req, res) => {
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// ✅ Catch-all route for React Router
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
