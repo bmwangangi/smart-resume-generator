@@ -11,32 +11,32 @@ import aiRouter from "./routes/aiRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Database
+// Connect DB
 await connectDB();
 
 // Parse JSON
 app.use(express.json());
 
-// ✅ CORS middleware
+// ✅ CORS setup
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app',
+  'http://localhost:5173', // local dev
+  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app' // deployed frontend
 ];
 
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman/curl
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error(`CORS error: Origin ${origin} not allowed.`), false);
-  },
-  credentials: true,
+  origin: allowedOrigins,
+  credentials: true
 }));
+
+// Preflight requests (automatic with cors, but can be explicit)
+app.options('*', cors({ origin: allowedOrigins, credentials: true }));
 
 // Routes
 app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
+// Test route
 app.get('/', (req, res) => res.send("Server is live..."));
 
 // Start server
