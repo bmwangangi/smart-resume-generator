@@ -1,51 +1,50 @@
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
+
 import connectDB from "./configs/db.js";
 import userRouter from "./routes/userRoutes.js";
 import resumeRouter from "./routes/resumeRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Connect to Database
+// Database connection
 await connectDB();
 
-// ✅ Parse JSON requests
+// Parse JSON
 app.use(express.json());
 
-// ✅ CORS configuration for local dev and deployed frontend
+// ✅ CORS configuration
 const allowedOrigins = [
   'http://localhost:5173', // local dev
-  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app/' // deployed frontend
+  'https://smart-resume-generator-653y-n52h5ph6x.vercel.app' // your deployed frontend
 ];
 
 app.use(cors({
   origin: function(origin, callback) {
-    // allow requests with no origin (like mobile apps, Postman, curl)
-    if (!origin) return callback(null, true);
-    if (!allowedOrigins.includes(origin)) {
-      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+    // allow requests with no origin (Postman, curl)
+    if(!origin) return callback(null, true);
+    if(!allowedOrigins.includes(origin)) {
+      const msg = `CORS error: Origin ${origin} not allowed.`;
       return callback(new Error(msg), false);
     }
     return callback(null, true);
   },
-  credentials: true
+  credentials: true, // allow cookies/auth headers
 }));
 
-// ✅ Test route
+// Test route
 app.get('/', (req, res) => res.send("Server is live..."));
 
-// ✅ API Routes
+// Routes
 app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
-// ✅ Start Server
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
