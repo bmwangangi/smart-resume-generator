@@ -1,38 +1,28 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-dotenv.config();
-
-import connectDB from "./configs/db.js";
-import userRouter from "./routes/userRoutes.js";
-import resumeRouter from "./routes/resumeRoutes.js";
-import aiRouter from "./routes/aiRoutes.js";
+import path from 'path';
+import express from 'express';
+import cors from 'cors';
+import userRouter from './routes/userRoutes.js';
+import resumeRouter from './routes/resumeRoutes.js';
+import aiRouter from './routes/aiRoutes.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const __dirname = path.resolve();
 
-await connectDB();
+app.use(cors());
 app.use(express.json());
 
-// Allow only your deployed frontend
-const allowedOrigins = [
-  process.env.FRONTEND_URL,  // e.g., https://smart-resume-generator-653y.vercel.app
-];
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error(`CORS error: Origin ${origin} not allowed.`), false);
-  },
-  credentials: true
-}));
-
-// Routes
+// API routes
 app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
-app.get('/', (req, res) => res.send("Server is live..."));
+// Catch-all route to serve index.html for frontend routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
