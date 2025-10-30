@@ -42,9 +42,6 @@ root/
 ├── .env # Environment Variables
 └── README.md
 
-yaml
-Copy code
-
 ---
 
 ## ⚙️ Environment Variables
@@ -68,8 +65,6 @@ OPENAI_BASE_URL=https://openrouter.ai/api/v1
 
 📦 Installation & Running Locally
 ✅ Backend Setup
-bash
-Copy code
 cd server
 npm install
 npm start
@@ -94,8 +89,6 @@ Ensure you set all .env values inside:
 🔐 Authentication
 All resume operations require a valid JWT token in headers:
 
-http
-Copy code
 Authorization: Bearer <token>
 🎯 API Endpoints (Backend)
 Method	Endpoint	Description
