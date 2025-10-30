@@ -6,34 +6,43 @@ import userRouter from "./routes/userRoutes.js";
 import resumeRouter from "./routes/resumeRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
 import dotenv from "dotenv";
-
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Database Connection
-await connectDB();
+await connectDB()
 
-// Parse JSON
-app.use(express.json());
+app.use(express.json())
 
-// CORS configuration
+// ✅ Updated CORS config
+const allowedOrigins = [
+  'http://localhost:5173', // local dev
+  'https://smart-resume-generator-653y.vercel.app' // deployed frontend
+]
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173", // local dev
-    "https://smart-resume-generator-653y.vercel.app" // deployed frontend
-  ],
-  credentials: true,
+  origin: function(origin, callback){
+    // allow requests with no origin (like mobile apps or curl)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
 }));
 
-// Routes
-app.get('/', (req, res) => res.send("Server is live..."));
-app.use('/api/users', userRouter);
-app.use('/api/resumes', resumeRouter);
-app.use('/api/ai', aiRouter);
+// Test route
+app.get('/', (req, res)=>res.send("Server is live..."))
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Routes
+app.use('/api/users', userRouter)
+app.use('/api/resumes', resumeRouter )
+app.use('/api/ai', aiRouter)
+
+app.listen(PORT, ()=>{
+  console.log(`server is running on port ${PORT}`)
 });
