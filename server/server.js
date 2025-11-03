@@ -8,26 +8,27 @@ import aiRouter from './routes/aiRoutes.js';
 const app = express();
 const __dirname = path.resolve();
 
-// ✅ Fix CORS configuration for credentials + Vercel frontend
+// ✅ Updated CORS for correct frontend domain
 app.use(cors({
   origin: [
-    "https://smart-resume-generator-x3gf.vercel.app", // your Vercel frontend
-    "http://localhost:5173" // for development
+    "https://smart-resume-generator-5eeb.vercel.app", // ✅ New Vercel domain
+    "http://localhost:5173" // ✅ local dev
   ],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true
 }));
 
 app.use(express.json());
 
-// ✅ API routes first
+// ✅ API routes
 app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
-// ✅ Serve static frontend files
+// ✅ Serve static frontend build
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-// ✅ Handle all non-API routes with index.html
+// ✅ Fallback for SPA
 app.get('*', (req, res) => {
   if (!req.path.startsWith('/api')) {
     return res.sendFile(path.join(__dirname, '../client/dist/index.html'));
@@ -35,4 +36,4 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(Server running on port ${PORT}));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
