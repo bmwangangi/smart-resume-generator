@@ -8,7 +8,15 @@ import aiRouter from './routes/aiRoutes.js';
 const app = express();
 const __dirname = path.resolve();
 
-app.use(cors());
+// ✅ Fix CORS configuration for credentials + Vercel frontend
+app.use(cors({
+  origin: [
+    "https://smart-resume-generator-x3gf.vercel.app", // your Vercel frontend
+    "http://localhost:5173" // for development
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // ✅ API routes first
@@ -19,13 +27,12 @@ app.use('/api/ai', aiRouter);
 // ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-// ✅ Proper fallback route for Express v5
-app.use((req, res, next) => {
-  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+// ✅ Handle all non-API routes with index.html
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
     return res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   }
-  next();
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(Server running on port ${PORT}));
